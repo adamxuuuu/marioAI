@@ -18,7 +18,7 @@ public class RMHC {
         random = new Random();
     }
 
-    public void evolve(ParamMarioLevelGenerator generator, int nIterations) {
+    public int[] evolve(ParamMarioLevelGenerator generator, int nIterations) {
         ArrayList<float[]> searchSpace = generator.getParameterSearchSpace();
 
         // Random initialization
@@ -39,6 +39,7 @@ public class RMHC {
         }
 
         System.out.println(Arrays.toString(currentBest));
+        return currentBest;
     }
 
     private int[] getRandomPoint(ArrayList<float[]> searchSpace) {

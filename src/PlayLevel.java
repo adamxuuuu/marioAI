@@ -1,8 +1,10 @@
 import agents.MarioAgent;
-import engine.core.*;
+import engine.core.MarioGame;
+import engine.core.MarioResult;
 import levelGenerators.MarioLevelGenerator;
 
-import static engine.helper.RunUtils.*;
+import static engine.helper.RunUtils.generateLevel;
+import static engine.helper.RunUtils.getLevel;
 
 @SuppressWarnings("ConstantConditions")
 public class PlayLevel {
@@ -10,9 +12,9 @@ public class PlayLevel {
     public static void main(String[] args) {
         // Run settings:
         boolean visuals = true;  // Set to false if no visuals required for this run.
-        boolean generateDifferentLevels = false;  // If true, each play will be a different generated level.
-        String levelFile = "levels/original/lvl-1.txt";  // null;
-        MarioLevelGenerator generator = new levelGenerators.notch.LevelGenerator();  // null;
+        boolean generateDifferentLevels = true;  // If true, each play will be a different generated level.
+        String levelFile = null; // "levels/original/lvl-1.txt";  // null;
+        MarioLevelGenerator generator = new levelGenerators.groupW.LevelGenerator();  // null;
 
         // Note: either levelFile or generator must be non-null. If neither is null, levelFile takes priority.
         if (levelFile == null && generator == null) {
@@ -34,10 +36,11 @@ public class PlayLevel {
         while (playAgain == 0) {  // 0 - play again! 1 - end execution.
 
             // Play the level, either as a human ...
-            MarioResult result = game.playGame(level, 200, 0);
+//            MarioResult result = game.playGame(level, 200, 0);
+            game.buildWorld(level, 1);
 
             // ... Or with an AI agent
-//            MarioResult result = game.runGame(agent, level, 20, 0, visuals);
+            MarioResult result = game.runGame(agent, level, 20, 0, visuals);
 
             // Print the results of the game
             System.out.println(result.getGameStatus().toString());
