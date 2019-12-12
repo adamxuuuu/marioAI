@@ -8,6 +8,7 @@ import engine.helper.MarioStats;
 import static engine.helper.RunUtils.resultToStats;
 
 public class LevelEvaluator {
+
     public static void evaluate(MarioAgent[] agents, String[] level, int repsPerLevel, int agentTimer) {
         int noLevels = level.length;
         MarioStats average;
@@ -132,4 +133,5 @@ public class LevelEvaluator {
                     + "  timeout:" + timeout);
         }
     }
+
 }

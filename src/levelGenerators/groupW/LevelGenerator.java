@@ -15,18 +15,25 @@ import java.util.*;
  */
 @SuppressWarnings("FieldCanBeLocal")
 public class LevelGenerator implements MarioLevelGenerator {
-    private static int sampleWidth = 15;
+    private static int sampleWidth = 5;
     private static String folderName = "levels/original/";
 
     private Random rnd;
 
+    // divide the level horizontally
+    // ground, middle, sky
     private int GROUND_Y_LOCATION = 13;
     private int SKY_Y_LOCATION = 5;
+
+    // tile mutate rate
     private float OBJECT_MUTATE_PROB = 0.2f;
+    // enemy mutate rate
     private float ENEMY_MUTATE_PROB = 0.5f;
+
+    // usually don't change this
     private int FLOOR_PADDING = 3;
 
-    private boolean mutate = true;
+    private boolean mutate = false;
 
     @Override
     public String getGeneratedLevel(MarioLevelModel model, MarioTimer timer) {
@@ -111,7 +118,7 @@ public class LevelGenerator implements MarioLevelGenerator {
                     }
 
                     // mutate blocks and its neighbours
-                    // if above ground level and below sky level
+                    // preserve ground and sky
                     if (y < GROUND_Y_LOCATION && y > SKY_Y_LOCATION
                             && block != MarioLevelModel.EMPTY && block != MarioLevelModel.PIPE_FLOWER) {
                         for (int i = x - 1; i <= x + 1; i++) {
