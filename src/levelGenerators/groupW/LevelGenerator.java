@@ -15,7 +15,7 @@ import java.util.*;
  */
 @SuppressWarnings("FieldCanBeLocal")
 public class LevelGenerator implements MarioLevelGenerator {
-    private static int sampleWidth = 10;
+    private static int sampleWidth = 15;
     private static String folderName = "levels/original/";
 
     private Random rnd;
@@ -25,6 +25,8 @@ public class LevelGenerator implements MarioLevelGenerator {
     private float OBJECT_MUTATE_PROB = 0.2f;
     private float ENEMY_MUTATE_PROB = 0.5f;
     private int FLOOR_PADDING = 3;
+
+    private boolean mutate = true;
 
     @Override
     public String getGeneratedLevel(MarioLevelModel model, MarioTimer timer) {
@@ -54,30 +56,31 @@ public class LevelGenerator implements MarioLevelGenerator {
             }
         }
 
-        // loop through neighbours and add the valid ones to the list
-        for (int x = 0; x < model.getWidth(); x++) {
-            for (int y = 0; y < model.getHeight(); y++) {
+        if (mutate) {
+            // loop through neighbours and add the valid ones to the list
+            for (int x = 0; x < model.getWidth(); x++) {
+                for (int y = 0; y < model.getHeight(); y++) {
 
-                char block = model.getBlock(x, y);
-                // remove start and exit
-                if (block == MarioLevelModel.MARIO_START || block == MarioLevelModel.MARIO_EXIT) {
-                    model.setBlock(x, y, MarioLevelModel.EMPTY);
-                }
+                    char block = model.getBlock(x, y);
+                    // remove start and exit
+                    if (block == MarioLevelModel.MARIO_START || block == MarioLevelModel.MARIO_EXIT) {
+                        model.setBlock(x, y, MarioLevelModel.EMPTY);
+                    }
 
-                connections.putIfAbsent(block, new ArrayList<>());
-                // build connectivity map
-                for (int i = x - 1; i <= x + 1; i++) {
-                    for (int j = y - 1; j < y + 1; j++) {
-                        // not the center
-                        char neigh = model.getBlock(i, j);
-                        if (i == x && j == y || neigh == MarioLevelModel.EMPTY) {
-                            continue;
+                    connections.putIfAbsent(block, new ArrayList<>());
+                    // build connectivity map
+                    for (int i = x - 1; i <= x + 1; i++) {
+                        for (int j = y - 1; j < y + 1; j++) {
+                            // not the center
+                            char neigh = model.getBlock(i, j);
+                            if (i == x && j == y || neigh == MarioLevelModel.EMPTY) {
+                                continue;
+                            }
+                            connections.get(block).add(neigh);
                         }
-                        connections.get(block).add(neigh);
                     }
                 }
             }
-        }
 
 //        random initialization
 //        int nInitCoords = 3;
@@ -94,34 +97,35 @@ public class LevelGenerator implements MarioLevelGenerator {
 //            }
 //        }
 
-        for (int x = 0; x < model.getWidth(); x++) {
-            for (int y = 0; y < model.getHeight(); y++) {
-                char block = model.getBlock(x, y);
+            for (int x = 0; x < model.getWidth(); x++) {
+                for (int y = 0; y < model.getHeight(); y++) {
+                    char block = model.getBlock(x, y);
 
-                // mutate enemy chars
-                if (belongTo(block, MarioLevelModel.getEnemyCharacters())) {
-                    if (rnd.nextDouble() > ENEMY_MUTATE_PROB) {
-                        char[] allEnemies = MarioLevelModel.getEnemyCharacters();
-                        model.setBlock(x, y, allEnemies[rnd.nextInt(allEnemies.length)]);
+                    // mutate enemy chars
+                    if (belongTo(block, MarioLevelModel.getEnemyCharacters())) {
+                        if (rnd.nextDouble() > ENEMY_MUTATE_PROB) {
+                            char[] allEnemies = MarioLevelModel.getEnemyCharacters();
+                            model.setBlock(x, y, allEnemies[rnd.nextInt(allEnemies.length)]);
+                        }
+                        continue;
                     }
-                    continue;
-                }
 
-                // mutate blocks and its neighbours
-                // if above ground level
-                if (y < GROUND_Y_LOCATION && y > SKY_Y_LOCATION
-                        && block != MarioLevelModel.EMPTY && block != MarioLevelModel.PIPE_FLOWER) {
-                    for (int i = x - 1; i <= x + 1; i++) {
-                        for (int j = y - 1; j < y + 1; j++) {
+                    // mutate blocks and its neighbours
+                    // if above ground level and below sky level
+                    if (y < GROUND_Y_LOCATION && y > SKY_Y_LOCATION
+                            && block != MarioLevelModel.EMPTY && block != MarioLevelModel.PIPE_FLOWER) {
+                        for (int i = x - 1; i <= x + 1; i++) {
+                            for (int j = y - 1; j < y + 1; j++) {
 //                         not the center
-                            if (i == x && j == y) {
-                                continue;
-                            }
-                            char neigh = model.getBlock(i, j);
-                            if (rnd.nextDouble() < OBJECT_MUTATE_PROB && neigh == MarioLevelModel.EMPTY) {
-                                ArrayList<Character> temp = connections.get(block);
-                                if (temp != null && temp.size() > 0) {
-                                    model.setBlock(i, j, temp.get(rnd.nextInt(temp.size())));
+                                if (i == x && j == y) {
+                                    continue;
+                                }
+                                char neigh = model.getBlock(i, j);
+                                if (rnd.nextDouble() < OBJECT_MUTATE_PROB && neigh == MarioLevelModel.EMPTY) {
+                                    ArrayList<Character> temp = connections.get(block);
+                                    if (temp != null && temp.size() > 0) {
+                                        model.setBlock(i, j, temp.get(rnd.nextInt(temp.size())));
+                                    }
                                 }
                             }
                         }
@@ -179,5 +183,4 @@ public class LevelGenerator implements MarioLevelGenerator {
     public String getGeneratorName() {
         return "GroupWGenerator";
     }
-
 }
