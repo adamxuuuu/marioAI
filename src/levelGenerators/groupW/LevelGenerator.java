@@ -1,5 +1,6 @@
 package levelGenerators.groupW;
 
+import agents.MarioAgent;
 import engine.core.MarioLevelModel;
 import engine.helper.MarioTimer;
 import levelGenerators.MarioLevelGenerator;
@@ -146,7 +147,9 @@ public class LevelGenerator implements MarioLevelGenerator {
         model.setBlock(FLOOR_PADDING / 2, 13, MarioLevelModel.MARIO_START);
         model.setBlock(model.getWidth() - 1 - FLOOR_PADDING / 2, 13, MarioLevelModel.MARIO_EXIT);
 
-        System.out.println(model.getMap());
+//        System.out.println(model.getMap());
+        LevelEvaluator.evaluate(new MarioAgent[]{new agents.robinBaumgarten.Agent(), new agents.sergeyPolikarpov.Agent(), new agents.glennHartmann.Agent(), new agents.trondEllingsen.Agent()},
+                20, 15, model.getMap());
         return model.getMap();
     }
 

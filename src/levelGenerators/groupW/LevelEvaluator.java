@@ -9,7 +9,7 @@ import static engine.helper.RunUtils.resultToStats;
 
 public class LevelEvaluator {
 
-    public static void evaluate(MarioAgent[] agents, String[] level, int repsPerLevel, int agentTimer) {
+    public static void evaluate(MarioAgent[] agents, int repsPerLevel, int agentTimer, String... level) {
         int noLevels = level.length;
         MarioStats average;
         MarioStats bestResult = new MarioStats();
